@@ -10,8 +10,6 @@
   },
   "author": "",
   "license": "ISC",
-<<<<<<< Updated upstream
-=======
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -19,7 +17,6 @@
     "express": "^4.19.2",
     "mongoose": "^8.4.4"
   },
->>>>>>> Stashed changes
   "devDependencies": {
     "nodemon": "^3.1.4",
     "prettier": "^3.3.2"
