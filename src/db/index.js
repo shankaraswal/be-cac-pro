@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-
-const DB_NAME = "videos";
+import mongoose from "mongoose";
+import { DB_NAME } from "../constants.js";
 
 const connectDB = async () => {
   try {
@@ -8,10 +7,10 @@ const connectDB = async () => {
       `${process.env.MONGODB_URI}/videos`
     );
 
-    console.log(`monog db connected : ${connectionInstance.connection.host}`);
+    console.log(`MONGO DB CONNECTED : ${connectionInstance.connection.host}`);
   } catch (err) {
-    console.log(err);
+    console.error("Failed to connect to MongoDB:", err);
     process.exit(1);
   }
 };
-module.exports = connectDB;
+export default connectDB;
