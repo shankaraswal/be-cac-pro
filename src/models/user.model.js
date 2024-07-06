@@ -25,12 +25,12 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
-    avatar: {
-      type: String,
-      required: true,
-    },
     pincode: {
       type: String,
+    },
+    avatarImage: {
+      type: String,
+      required: true,
     },
     coverImage: {
       type: String,
