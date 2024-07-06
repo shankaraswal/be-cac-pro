@@ -1,8 +1,24 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import { User } from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
+import { User } from "../models/user.model.js";
+
+// GENERATE REFRESH TOKEN AND ACCESS TOKEN FN
+const generateTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(500, "Error while generating tokens");
+  }
+};
 
 // REGISTER USER
 const registerUser = asyncHandler(async (req, res) => {
@@ -74,17 +90,17 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, userName, password } = req.body;
 
   // check if user or email exist
-  if (!userName || !email) {
-    throw new ApiError(400, "Eigher username or password required");
+  if (!userName && email) {
+    throw new ApiError(400, "Either username or email required");
   }
-  const user = User.findOne({
+
+  const user = await User.findOne({
     $or: [{ userName }, { email }],
   });
 
   if (!user) {
     throw new ApiError(401, "User does not exist");
   }
-
   const isValidPasswrd = await user.isPasswordCorrect(password);
 
   if (!isValidPasswrd) {
@@ -98,14 +114,14 @@ const loginUser = asyncHandler(async (req, res) => {
 
   // CREATE COOKIE OBJECT
   const options = {
-    httpOnly: true,
-    secure: true,
+    httpOnly: false,
+    secure: false,
   };
+
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .cookie("aswal", "shankar singh aswal", options)
     .json(
       new ApiResponse(
         200,
@@ -124,8 +140,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,
       },
     },
     {
@@ -144,22 +160,5 @@ const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
-
-// GENERATE REFRESH TOKEN AND ACCESS TOKEN FN
-const generateTokens = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
-
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(500, "Error while generating tokens");
-    console.log(error);
-  }
-};
 
 export { registerUser, loginUser, logoutUser, generateTokens };
