@@ -20,7 +20,6 @@ router.route("/register").post(
 router.route("/login").post(loginUser);
 
 // SECURED Router
-
 router.route("/logout").post(verifyJWToken, logoutUser);
 
 export default router;
