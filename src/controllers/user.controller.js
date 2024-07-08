@@ -437,8 +437,36 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
 
+<<<<<<< Updated upstream
+=======
+// ---------------------------------------------------------------
+// GET CURRENT USER
+// ---------------------------------------------------------------
+/**
+ * Retrieves the current user from the request and sends a response with the user data.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} req.user - The authenticated user object.
+ * @param {string} req.user._id - The ID of the authenticated user.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the response is sent.
+ */
+>>>>>>> Stashed changes
 const getCurrentUser = asyncHandler(async (req, res) => {
-  // TODO: check if user is logged in
+  /**
+   * Sends a response with the current user data.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} req.user - The authenticated user object.
+   * @param {string} req.user._id - The ID of the authenticated user.
+   * @param {Object} res - The response object.
+   * @returns {Promise<void>} - A promise that resolves when the response is sent.
+   */
+  // await res.status(200).json(200, req.user, "Fetched current user data");
+
+  await res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Fetched current user data"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -469,4 +497,5 @@ export {
   generateTokens,
   refreshAccessToken,
   changeCurrentPassword,
+  getCurrentUser,
 };
